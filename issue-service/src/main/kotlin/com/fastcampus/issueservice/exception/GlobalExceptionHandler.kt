@@ -23,4 +23,11 @@ class GlobalExceptionHandler {
 
         return ErrorResponse(code = 401, message = "Token Expired Error")
     }
+
+    @ExceptionHandler(Exception::class)
+    fun handlerException(ex: Exception): ErrorResponse {
+        logger.error { ex.message }
+
+        return ErrorResponse(code = 500, message = ex.message!!)
+    }
 }
