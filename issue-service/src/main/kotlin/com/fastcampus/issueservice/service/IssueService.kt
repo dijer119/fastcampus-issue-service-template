@@ -1,5 +1,6 @@
 package com.fastcampus.issueservice.service
 
+import com.fastcampus.issueservice.config.AuthUser
 import com.fastcampus.issueservice.domain.Issue
 import com.fastcampus.issueservice.domain.IssueRepository
 import com.fastcampus.issueservice.domain.enums.IssueStatus
@@ -37,5 +38,23 @@ class IssueService(
     fun get(id: Long): IssueResponse {
         val issue = issueRepository.findByIdOrNull(id) ?: throw NotFoundException("이슈가 존재하지 않습니다")
         return IssueResponse(issue)
+    }
+
+    @Transactional
+    fun edit(userId: Long, id: Long, request: IssueRequest): IssueResponse {
+        val issue: Issue = issueRepository.findByIdOrNull(id) ?: throw NotFoundException("이슈가 존재하지 않습니다")
+        return with(issue) {
+            summary = request.summary
+            description = request.description
+            this.userId = userId
+            priority = request.priority
+            status = request.status
+            IssueResponse(issueRepository.save(this))
+        }
+    }
+
+    @Transactional
+    fun delete(userId: Long, id: Long) {
+        issueRepository.deleteById(id)
     }
 }

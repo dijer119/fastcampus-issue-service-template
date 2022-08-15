@@ -1,56 +1,46 @@
 package com.fastcampus.issueservice.web
 
 import com.fastcampus.issueservice.config.AuthUser
-import com.fastcampus.issueservice.domain.enums.IssueStatus
-import com.fastcampus.issueservice.model.IssueRequest
-import com.fastcampus.issueservice.service.IssueService
+import com.fastcampus.issueservice.model.CommentRequest
+import com.fastcampus.issueservice.model.CommentResponse
+import com.fastcampus.issueservice.service.CommentService
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/v1/issues")
-class IssueController(
-    private val issueService: IssueService
+@RequestMapping("/api/v1/issues/{issueId}/comments")
+class CommentController(
+    private val commentService: CommentService
 ) {
 
     @PostMapping
     fun create(
         authUser: AuthUser,
-        @RequestBody request: IssueRequest
-    ) = issueService.create(authUser.userId, request)
-
-    @GetMapping
-    fun getAll(
-        authUser: AuthUser,
-        @RequestParam(required = false, defaultValue = "TODO") status: IssueStatus,
-    ) = issueService.getAll(status)
-
-    @GetMapping("/{id}")
-    fun get(
-        authUser: AuthUser,
-        @PathVariable id: Long
-    ) = issueService.get(id)
+        @PathVariable issueId: Long,
+        @RequestBody request: CommentRequest
+    ): CommentResponse {
+        return commentService.create(issueId, authUser.userId, authUser.username, request)
+    }
 
     @PutMapping("/{id}")
     fun edit(
         authUser: AuthUser,
         @PathVariable id: Long,
-        @RequestBody request: IssueRequest
-    ) = issueService.edit(authUser.userId, id, request)
+        @RequestBody request: CommentRequest
+    ) = commentService.edit(id, authUser.userId, request)
 
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     fun delete(
         authUser: AuthUser,
+        @PathVariable issueId: Long,
         @PathVariable id: Long
-    ) = issueService.delete(authUser.userId, id)
+    ) = commentService.delete(issueId, id, authUser.userId)
 }
