@@ -39,7 +39,8 @@ subprojects {
         implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
 
         // h2
-        runtimeOnly("com.h2database:h2")
+        runtimeOnly("org.mariadb.jdbc:mariadb-java-client:3.0.4")
+//        runtimeOnly("com.h2database:h2")
 
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
         testImplementation("org.springframework.boot:spring-boot-starter-test")
